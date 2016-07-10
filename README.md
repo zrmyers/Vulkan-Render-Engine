@@ -21,6 +21,6 @@ This project was developed with insight gleaned from "API Without Secrets" tutor
 
 ##VK_Surface
 #Useful Links
-https://software.intel.com/en-us/articles/api-without-secrets-introduction-to-vulkan-part-1 \n
-https://github.com/KhronosGroup/Vulkan-Docs \n
-https://vulkan.lunarg.com \n
+https://software.intel.com/en-us/articles/api-without-secrets-introduction-to-vulkan-part-1  
+https://github.com/KhronosGroup/Vulkan-Docs  
+https://vulkan.lunarg.com  
