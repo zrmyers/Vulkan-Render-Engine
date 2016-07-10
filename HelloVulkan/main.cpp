@@ -2,7 +2,6 @@
 #include <string>
 #include "vk_renderer.h"
 
-
 using namespace std;
 
 //global variables

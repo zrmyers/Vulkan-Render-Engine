@@ -111,11 +111,13 @@ private:
 
 		VkPhysicalDevice* getPhysicalDevice();
 		uint32_t getGraphicsQueueFamilyIndex();
+		uint32_t getPresentationQueueFamilyIndex(VkSurfaceKHR*);
 	private:
 		bool checkProperties(VkPhysicalDevice,VK_PhysicalDeviceInfo*);
 	private:
 		VkPhysicalDevice* physicalDevice;
 		uint32_t graphics_queue_family_index;
+		uint32_t presentation_queue_family_index;
 	};
 	//VK_Device class maintains lifecycle of vkDevice
 	class VK_Device

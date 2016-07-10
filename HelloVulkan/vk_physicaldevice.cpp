@@ -88,6 +88,7 @@ bool VK_Renderer::VK_PhysicalDevice::checkProperties(VkPhysicalDevice phydev, VK
 			(queue_family_properties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT))
 		{
 			graphics_queue_family_index = i;
+			presentation_queue_family_index = i;  // we will verify this once we fetch the presentation queue family index
 			return true;
 		}
 	}
@@ -98,6 +99,42 @@ bool VK_Renderer::VK_PhysicalDevice::checkProperties(VkPhysicalDevice phydev, VK
 uint32_t VK_Renderer::VK_PhysicalDevice::getGraphicsQueueFamilyIndex()
 {
 	return graphics_queue_family_index;
+}
+
+uint32_t VK_Renderer::VK_PhysicalDevice::getPresentationQueueFamilyIndex(VkSurfaceKHR* surface)
+{
+	VkBool32 result;
+	vkGetPhysicalDeviceSurfaceSupportKHR(*physicalDevice, presentation_queue_family_index, *surface, &result);
+
+	if (!result)
+	{
+		//need to find a family that does support presentation
+		uint32_t queue_family_count = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(*physicalDevice, &queue_family_count, nullptr);
+
+		if (queue_family_count == 0)
+		{
+			std::cout << "Physical device " << physicalDevice << " has no queue families!\n";
+			return presentation_queue_family_index;
+		}
+
+		std::vector<VkQueueFamilyProperties> queue_family_properties(queue_family_count);
+		vkGetPhysicalDeviceQueueFamilyProperties(*physicalDevice, &queue_family_count, &queue_family_properties[0]);
+
+		//for each family, check that it supports a presentation queue
+		for (uint32_t i = 0; i < queue_family_count; i++)
+		{
+			vkGetPhysicalDeviceSurfaceSupportKHR(*physicalDevice, i, *surface, &result);
+
+			if (result)
+			{
+				presentation_queue_family_index = i;
+				break;
+			}
+		}
+	}
+
+	return presentation_queue_family_index;
 }
 
 VkPhysicalDevice* VK_Renderer::VK_PhysicalDevice::getPhysicalDevice()
