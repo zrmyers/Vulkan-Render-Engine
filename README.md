@@ -24,3 +24,4 @@ This project was developed with insight gleaned from "API Without Secrets" tutor
 https://software.intel.com/en-us/articles/api-without-secrets-introduction-to-vulkan-part-1  
 https://github.com/KhronosGroup/Vulkan-Docs  
 https://vulkan.lunarg.com  
+http://www.glfw.org/docs/3.2/vulkan.html  
