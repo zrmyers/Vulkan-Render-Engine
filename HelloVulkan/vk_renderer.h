@@ -61,6 +61,7 @@ private:
 	{
 		VkPhysicalDevice* physicalDevice;
 		uint32_t graphicsQueueFamilyIndex;
+		uint32_t presentQueueFamilyIndex;
 		uint32_t enabledLayerCount;
 		const char* const* ppEnabledLayerNames;
 		uint32_t enabledExtensionCount;
@@ -150,5 +151,9 @@ private:
 	VK_Surface* surface;					//vulkan surface
 	VK_PhysicalDevice* physicalDevice;		//vulkan physical device
 	VK_Device* device;						//vulkan device
-	VK_Queue* queue;						//vulkan queue
+	VK_Queue* graphicsQueue;				//vulkan graphics queue
+	VK_Queue* presentQueue;					//vulkan present queue
+
+	uint32_t graphicsQFamilyIndex;			//queue family indices
+	uint32_t presentQFamilyIndex;
 };

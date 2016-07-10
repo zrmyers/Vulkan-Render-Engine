@@ -12,22 +12,39 @@ VK_Renderer::VK_Device::VK_Device(VK_DeviceInfo* devinfo)
 	device = (VkDevice*)malloc(sizeof(VkDevice));
 	float queuePriorities = 1.0f; //this may be renderer level information
 
-								  //data for queue creation with device
-	VkDeviceQueueCreateInfo queueCreateInfo;
-	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	queueCreateInfo.pNext = nullptr;
-	queueCreateInfo.flags = 0;
-	queueCreateInfo.queueFamilyIndex = devinfo->graphicsQueueFamilyIndex; //need to fill in with data from physical device
-	queueCreateInfo.queueCount = 1;
-	queueCreateInfo.pQueuePriorities = &queuePriorities;
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+
+	//data for queue creation with device
+	VkDeviceQueueCreateInfo graphicsQueueCreateInfo;
+	graphicsQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	graphicsQueueCreateInfo.pNext = nullptr;
+	graphicsQueueCreateInfo.flags = 0;
+	graphicsQueueCreateInfo.queueFamilyIndex = devinfo->graphicsQueueFamilyIndex; //need to fill in with data from physical device
+	graphicsQueueCreateInfo.queueCount = 1;
+	graphicsQueueCreateInfo.pQueuePriorities = &queuePriorities;
+
+	queueCreateInfos.push_back(graphicsQueueCreateInfo);
+
+	if (devinfo->graphicsQueueFamilyIndex != devinfo->presentQueueFamilyIndex)
+	{
+		VkDeviceQueueCreateInfo presentQueueCreateInfo;
+		presentQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		presentQueueCreateInfo.pNext = nullptr;
+		presentQueueCreateInfo.flags = 0;
+		presentQueueCreateInfo.queueFamilyIndex = devinfo->presentQueueFamilyIndex;
+		presentQueueCreateInfo.queueCount = 1;
+		presentQueueCreateInfo.pQueuePriorities = &queuePriorities;
+
+		queueCreateInfos.push_back(presentQueueCreateInfo);
+	}
 
 	//data for device creation
 	VkDeviceCreateInfo devCreateInfo;
 	devCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	devCreateInfo.pNext = nullptr;
 	devCreateInfo.flags = 0;
-	devCreateInfo.queueCreateInfoCount = 1;
-	devCreateInfo.pQueueCreateInfos = &queueCreateInfo;
+	devCreateInfo.queueCreateInfoCount = (uint32_t) queueCreateInfos.size();
+	devCreateInfo.pQueueCreateInfos = &queueCreateInfos[0];
 	devCreateInfo.enabledLayerCount = devinfo->enabledLayerCount;
 	devCreateInfo.ppEnabledLayerNames = devinfo->ppEnabledLayerNames;
 	devCreateInfo.enabledExtensionCount = devinfo->enabledExtensionCount;

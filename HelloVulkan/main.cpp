@@ -13,8 +13,8 @@ int main(int argc, char** argv)
 	cout << "\nInitializing Window\n";
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	GLFWwindow* window = glfwCreateWindow(1024, 768, "Hello Vulkan!", nullptr, nullptr);
-
+	GLFWwindow* window = glfwCreateWindow(1024, 768, "Hello Vulkan", nullptr, nullptr);
+	
 	cout << "\nInitializing Renderer\n";
 	VK_RendererInfo rinfo;
 	rinfo.applicationName = "Hello Vulkan";
@@ -33,9 +33,9 @@ int main(int argc, char** argv)
 	cout << "\nDestroying Renderer\n";
 	if (renderer != nullptr) delete renderer;
 
-	cout << "\nDestroying Window\n";
-	glfwTerminate();
+	cout << "\nDestroying Window\n";	
 	glfwDestroyWindow(window);
+	glfwTerminate();
 	cout << "\nDone...\n";
 	
 	return 0;

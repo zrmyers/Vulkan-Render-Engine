@@ -9,7 +9,6 @@ VK_Renderer::VK_Surface::VK_Surface(VK_SurfaceInfo* sinfo)
 		std::cout << "Vulkan Error: Failed to create surface!\n";
 		surface = VK_NULL_HANDLE;
 	}
-
 	instance = sinfo->instance;
 	allocs = sinfo->allocs;
 }
