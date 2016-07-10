@@ -1,6 +1,7 @@
 #pragma once
 //includes
 #include <vulkan\vulkan.h>
+#include <GLFW\glfw3.h>
 #include <stdlib.h>
 #include <iostream>
 #include <string>
@@ -18,6 +19,7 @@ typedef struct VK_RendererInfo
 	int eng_VMAJOR;
 	int eng_VMINOR;
 	int eng_VPATCH;
+	GLFWwindow* window;
 }VK_RendererInfo;
 
 class VK_Renderer
@@ -49,6 +51,12 @@ private:
 		uint32_t minAPIVersionPatch;
 		uint32_t maxDimm2D;
 	}VK_PhysicalDeviceInfo;
+	typedef struct VK_SurfaceInfo
+	{
+		VkInstance* instance;
+		GLFWwindow* window;
+		VkAllocationCallbacks* allocs;
+	}VK_SurfaceInfo;
 	typedef struct VK_DeviceInfo
 	{
 		VkPhysicalDevice* physicalDevice;
@@ -85,12 +93,14 @@ private:
 	class VK_Surface
 	{
 	public:
-		VK_Surface();
+		VK_Surface(VK_SurfaceInfo*);
 		~VK_Surface();
 
 		VkSurfaceKHR* getSurface();
 	private:
 		VkSurfaceKHR* surface;
+		VkAllocationCallbacks* allocs;
+		VkInstance* instance;
 	};
 	//VK_PhysicalDevice class maintains lifecycle of vkPhysicalDevice
 	class VK_PhysicalDevice

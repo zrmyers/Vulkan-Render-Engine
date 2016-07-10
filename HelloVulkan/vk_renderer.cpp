@@ -1,19 +1,19 @@
 #include "vk_renderer.h"
 
 VK_Renderer::VK_Renderer(VK_RendererInfo* rinfo)
-{
+{	
 	//extension needed for instance
-	std::vector<const char*> extensions = { VK_KHR_SURFACE_EXTENSION_NAME, "VK_KHR_win32_surface" };
+	uint32_t ext_count;
+	const char** extensions = glfwGetRequiredInstanceExtensions(&ext_count);
 
 	//information to create instance object
 	VK_InstanceInfo instInfo;	
 	instInfo.pApplicationName = rinfo->applicationName.c_str();
 	instInfo.applicationVersion = VK_MAKE_VERSION(rinfo->app_VMAJOR, rinfo->app_VMINOR, rinfo->app_VPATCH);
 	instInfo.pEngineName = rinfo->engineName.c_str();
-	instInfo.enabledExtensionCount = 2;	
+	instInfo.enabledExtensionCount = ext_count;	
 	instInfo.ppEnabledExtensionNames = &extensions[0];
-	instInfo.enabledLayerCount = 0;
-	 
+	instInfo.enabledLayerCount = 0;	 
 	instInfo.ppEnabledLayerNames = nullptr;
 	instInfo.allocs = nullptr;
 	instInfo.apiVersion = 0; //current version of vulkan
@@ -41,6 +41,19 @@ VK_Renderer::VK_Renderer(VK_RendererInfo* rinfo)
 		std::cout << "Error: Failed to obtain physical device with vulkan support!\n";
 		return;
 	}
+
+
+	if (!glfwGetPhysicalDevicePresentationSupport(*(instance->getInstance()), *(physicalDevice->getPhysicalDevice()), physicalDevice->getGraphicsQueueFamilyIndex()))
+	{
+		std::cout << "Error: Instance does not support vulkan presentation!\n";
+		return;
+	}
+
+	//create a window surface
+	VK_SurfaceInfo sinfo;
+	sinfo.instance = instance->getInstance();
+	sinfo.allocs = nullptr;
+	sinfo.window = rinfo->window;
 
 	//information to create logical device object
 	VK_DeviceInfo devInfo;
@@ -86,4 +99,5 @@ VK_Renderer::~VK_Renderer()
 	if (physicalDevice != nullptr) delete physicalDevice;
 	std::cout << "Destroying Vulkan Instance\n";
 	if (instance != nullptr) delete instance;
+	
 }

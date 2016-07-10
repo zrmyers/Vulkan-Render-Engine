@@ -81,6 +81,7 @@ bool VK_Renderer::VK_PhysicalDevice::checkProperties(VkPhysicalDevice phydev, VK
 	std::vector<VkQueueFamilyProperties> queue_family_properties(queue_family_count);
 	vkGetPhysicalDeviceQueueFamilyProperties(phydev, &queue_family_count, &queue_family_properties[0]);
 
+	graphics_queue_family_index = UINT32_MAX;
 	for (uint32_t i = 0; i < queue_family_count; i++)
 	{
 		if ((queue_family_properties[i].queueCount > 0) &&
