@@ -130,10 +130,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="vk_device.cpp" />
+    <ClCompile Include="vk_instance.cpp" />
+    <ClCompile Include="vk_physicaldevice.cpp" />
+    <ClCompile Include="vk_queue.cpp" />
     <ClCompile Include="vk_renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vk_renderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

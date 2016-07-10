@@ -78,6 +78,8 @@ private:
 	private:
 		VkInstance* instance;
 		VkAllocationCallbacks* allocs;
+
+		bool checkExtensionAvailability(const char*, std::vector<VkExtensionProperties>);
 	};
 	//VK_Surface class maintains lifecycle of vkSurface
 	class VK_Surface
