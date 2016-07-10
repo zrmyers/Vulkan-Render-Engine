@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	rinfo.app_VMAJOR = 1;
 	rinfo.app_VMINOR = 0;
 	rinfo.app_VPATCH = 0;
-	rinfo.engineName = "Zeal";
+	rinfo.engineName = "Zeality";
 	rinfo.eng_VMAJOR = 1;
 	rinfo.eng_VMINOR = 0;
 	rinfo.eng_VPATCH = 0;
@@ -25,6 +25,7 @@ int main(int argc, char** argv)
 	if ((renderer = new VK_Renderer(&rinfo)) == nullptr) cout << "Failed to Initialize Renderer!\n";
 
 	//Destruction Segment
-	cout << "Destroying Renderer\n";
+	cout << "\nDestroying Renderer\n";
 	if (renderer != nullptr) delete renderer;
+	cout << "\nDone...\n";
 }
