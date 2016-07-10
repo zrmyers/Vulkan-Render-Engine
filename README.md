@@ -23,4 +23,5 @@ This project was developed with insight gleaned from "API Without Secrets" tutor
 #Useful Links
 https://software.intel.com/en-us/articles/api-without-secrets-introduction-to-vulkan-part-1
 https://github.com/opentk/Vulkan-Docs
+https://github.com/KhronosGroup/Vulkan-Docs
 https://vulkan.lunarg.com
