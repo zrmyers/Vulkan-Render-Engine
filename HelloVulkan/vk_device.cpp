@@ -58,6 +58,16 @@ VK_Renderer::VK_Device::VK_Device(VK_DeviceInfo* devinfo)
 		std::cout << "Vulkan Error: Could Not create Vulkan device!\n";
 		device = VK_NULL_HANDLE;
 	}
+
+	presentQueueFamilyIndex = devinfo->presentQueueFamilyIndex;
+	graphicsQueueFamilyIndex = devinfo->graphicsQueueFamilyIndex;
+
+	//let's build some q's
+	graphicsQueue = (VkQueue*)malloc(sizeof(VkQueue));
+	presentQueue = (VkQueue*)malloc(sizeof(VkQueue));
+
+	vkGetDeviceQueue(*device, graphicsQueueFamilyIndex, 0, graphicsQueue);
+	vkGetDeviceQueue(*device, presentQueueFamilyIndex, 0, presentQueue);
 }
 
 VkDevice* VK_Renderer::VK_Device::getDevice()
@@ -65,10 +75,28 @@ VkDevice* VK_Renderer::VK_Device::getDevice()
 	return device;
 }
 
+
+VkQueue* VK_Renderer::VK_Device::getPresentQueue()
+{
+	return presentQueue;
+}
+
+
+VkQueue* VK_Renderer::VK_Device::getGraphicsQueue()
+{
+	return graphicsQueue;
+}
+
 VK_Renderer::VK_Device::~VK_Device()
 {
 	if (device != VK_NULL_HANDLE)
 	{
+		vkQueueWaitIdle(*graphicsQueue);
+		free((void*)graphicsQueue);
+
+		vkQueueWaitIdle(*presentQueue);
+		free((void*)presentQueue);
+
 		vkDeviceWaitIdle(*device);
 		vkDestroyDevice(*device, allocs);
 	}

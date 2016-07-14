@@ -133,7 +133,6 @@
     <ClCompile Include="vk_device.cpp" />
     <ClCompile Include="vk_instance.cpp" />
     <ClCompile Include="vk_physicaldevice.cpp" />
-    <ClCompile Include="vk_queue.cpp" />
     <ClCompile Include="vk_renderer.cpp" />
     <ClCompile Include="vk_surface.cpp" />
   </ItemGroup>

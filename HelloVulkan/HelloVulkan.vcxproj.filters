@@ -30,9 +30,6 @@
     <ClCompile Include="vk_device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vk_queue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="vk_surface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

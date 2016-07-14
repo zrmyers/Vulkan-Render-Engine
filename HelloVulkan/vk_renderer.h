@@ -128,19 +128,16 @@ private:
 		~VK_Device();
 
 		VkDevice* getDevice();
+		VkQueue* getPresentQueue();
+		VkQueue* getGraphicsQueue();
 	private:
 		VkDevice* device;
 		VkAllocationCallbacks* allocs;
-	};
-	//VK_Queue class maintains lifecycle of vkQueue
-	class VK_Queue
-	{
-	public:
-		VK_Queue(VK_QueueInfo*);
-		~VK_Queue();
+		VkQueue* graphicsQueue;
+		VkQueue* presentQueue;
 
-	private:
-		VkQueue* queue;
+		uint32_t presentQueueFamilyIndex;
+		uint32_t graphicsQueueFamilyIndex;
 	};
 public:
 	VK_Renderer(VK_RendererInfo*);
@@ -151,9 +148,5 @@ private:
 	VK_Surface* surface;					//vulkan surface
 	VK_PhysicalDevice* physicalDevice;		//vulkan physical device
 	VK_Device* device;						//vulkan device
-	VK_Queue* graphicsQueue;				//vulkan graphics queue
-	VK_Queue* presentQueue;					//vulkan present queue
 
-	uint32_t graphicsQFamilyIndex;			//queue family indices
-	uint32_t presentQFamilyIndex;
 };

@@ -78,44 +78,10 @@ VK_Renderer::VK_Renderer(VK_RendererInfo* rinfo)
 		return;
 	}
 
-	graphicsQFamilyIndex = devInfo.graphicsQueueFamilyIndex;
-	presentQFamilyIndex = devInfo.presentQueueFamilyIndex;
-
-	//information to create graphics queue
-	VK_QueueInfo g_qinfo;
-	g_qinfo.device = device->getDevice();
-	g_qinfo.queueFamilyIndex = graphicsQFamilyIndex;
-	g_qinfo.queueIndex = 0;
-
-	//create graphics queue instance
-	std::cout << "Creating Vulkan Graphics Queue Instance\n";
-	if ((graphicsQueue = new VK_Queue(&g_qinfo)) == nullptr)
-	{
-		std::cout << "Error: Failed to create queue!\n";
-		return;
-	}
-
-	//information to create a present queue
-	VK_QueueInfo p_qinfo;
-	p_qinfo.device = device->getDevice();
-	p_qinfo.queueFamilyIndex = presentQFamilyIndex;
-	p_qinfo.queueIndex = 0;
-
-	//create queue instance
-	std::cout << "Creating Vulkan Present Queue Instance\n";
-	if ((presentQueue = new VK_Queue(&p_qinfo)) == nullptr)
-	{
-		std::cout << "Error: Failed to create queue!\n";
-		return;
-	}
 }
 
 VK_Renderer::~VK_Renderer()
 {
-	std::cout << "Destroying Vulkan Present Queue Instance\n";
-	if (presentQueue != nullptr) delete presentQueue;
-	std::cout << "Destroying Vulkan Graphics Queue Instance\n";
-	if (graphicsQueue != nullptr) delete graphicsQueue;
 	std::cout << "Destroying Vulkan Device Instance\n";
 	if (device != nullptr) delete device;
 	std::cout << "Destroying Vulkan Surface Instance\n";
