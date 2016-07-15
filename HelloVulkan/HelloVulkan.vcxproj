@@ -135,6 +135,7 @@
     <ClCompile Include="vk_physicaldevice.cpp" />
     <ClCompile Include="vk_renderer.cpp" />
     <ClCompile Include="vk_surface.cpp" />
+    <ClCompile Include="vk_swapchain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vk_renderer.h" />

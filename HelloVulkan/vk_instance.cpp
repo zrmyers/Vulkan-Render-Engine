@@ -80,4 +80,5 @@ VkInstance* VK_Renderer::VK_Instance::getInstance()
 VK_Renderer::VK_Instance::~VK_Instance()
 {
 	vkDestroyInstance(*instance, allocs);
+	free((void*)instance);
 }

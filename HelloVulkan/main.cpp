@@ -14,7 +14,15 @@ int main(int argc, char** argv)
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	GLFWwindow* window = glfwCreateWindow(1024, 768, "Hello Vulkan", nullptr, nullptr);
-	
+	if (!window)
+	{
+		cout << "Failed to Initialize Window!\n";
+		glfwTerminate();
+		return -1;
+	}
+
+	glfwMakeContextCurrent(window);
+
 	cout << "\nInitializing Renderer\n";
 	VK_RendererInfo rinfo;
 	rinfo.applicationName = "Hello Vulkan";
@@ -27,7 +35,11 @@ int main(int argc, char** argv)
 	rinfo.eng_VPATCH = 0;
 	rinfo.window = window;
 
-	if ((renderer = new VK_Renderer(&rinfo)) == nullptr) cout << "Failed to Initialize Renderer!\n";
+	if ((renderer = new VK_Renderer(&rinfo)) == nullptr)
+	{
+		cout << "Failed to Initialize Renderer!\n";
+		return -1;
+	}
 
 	//Destruction Segment
 	cout << "\nDestroying Renderer\n";

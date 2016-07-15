@@ -21,4 +21,5 @@ VkSurfaceKHR* VK_Renderer::VK_Surface::getSurface()
 VK_Renderer::VK_Surface::~VK_Surface()
 {
 	vkDestroySurfaceKHR(*instance, *surface, allocs);
+	free((void*)surface);
 }

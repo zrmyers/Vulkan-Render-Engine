@@ -68,13 +68,26 @@ VK_Renderer::VK_Device::VK_Device(VK_DeviceInfo* devinfo)
 
 	vkGetDeviceQueue(*device, graphicsQueueFamilyIndex, 0, graphicsQueue);
 	vkGetDeviceQueue(*device, presentQueueFamilyIndex, 0, presentQueue);
+
+	//let's make some semaphores
+	renderingFinishedSemaphore = (VkSemaphore*)malloc(sizeof(VkSemaphore));
+    imageAvailableSemaphore = (VkSemaphore*)malloc(sizeof(VkSemaphore));
+
+	VkSemaphoreCreateInfo semaphinfo;
+	semaphinfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+	semaphinfo.pNext = nullptr;
+	semaphinfo.flags = 0;
+
+	if ((vkCreateSemaphore(*device, &semaphinfo, allocs, renderingFinishedSemaphore) != VK_SUCCESS) || (vkCreateSemaphore(*device, &semaphinfo, allocs, imageAvailableSemaphore) != VK_SUCCESS))
+	{
+		std::cout << "Vulkan Error: Could not create semaphores!\n";
+	}
 }
 
 VkDevice* VK_Renderer::VK_Device::getDevice()
 {
 	return device;
 }
-
 
 VkQueue* VK_Renderer::VK_Device::getPresentQueue()
 {
@@ -87,6 +100,16 @@ VkQueue* VK_Renderer::VK_Device::getGraphicsQueue()
 	return graphicsQueue;
 }
 
+VkSemaphore* VK_Renderer::VK_Device::getImageAvailableSemaphore()
+{
+	return imageAvailableSemaphore;
+}
+
+VkSemaphore* VK_Renderer::VK_Device::getRenderingFinishedSemaphore()
+{
+	return renderingFinishedSemaphore;
+}
+
 VK_Renderer::VK_Device::~VK_Device()
 {
 	if (device != VK_NULL_HANDLE)
@@ -96,8 +119,13 @@ VK_Renderer::VK_Device::~VK_Device()
 
 		vkQueueWaitIdle(*presentQueue);
 		free((void*)presentQueue);
+		
+		free((void*)renderingFinishedSemaphore);
+
+		free((void*)imageAvailableSemaphore);
 
 		vkDeviceWaitIdle(*device);
 		vkDestroyDevice(*device, allocs);
+		free((void*)device);
 	}
 }

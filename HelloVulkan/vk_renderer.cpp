@@ -78,10 +78,27 @@ VK_Renderer::VK_Renderer(VK_RendererInfo* rinfo)
 		return;
 	}
 
+	//information to create swap chain object
+	VK_SwapchainInfo swapInfo;
+	swapInfo.physicalDevice = physicalDevice->getPhysicalDevice();
+	swapInfo.surface = surface->getSurface();
+	swapInfo.screen_width = rinfo->screen_width;
+	swapInfo.screen_height = rinfo->screen_height;
+	swapInfo.device = device->getDevice();
+	swapInfo.allocs = nullptr;
+
+	//create swap chain object
+	std::cout << "Creating Vulkan Swapchain Instance\n";
+	if ((swapchain = new VK_Swapchain(&swapInfo)) == nullptr)
+	{
+		std::cout << "Error: Failed to create swapchain!\n";
+	}
 }
 
 VK_Renderer::~VK_Renderer()
 {
+	std::cout << "Destroying Vulkan Swapchain Instance\n";
+	if (swapchain != nullptr) delete swapchain;
 	std::cout << "Destroying Vulkan Device Instance\n";
 	if (device != nullptr) delete device;
 	std::cout << "Destroying Vulkan Surface Instance\n";

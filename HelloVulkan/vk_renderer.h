@@ -20,6 +20,8 @@ typedef struct VK_RendererInfo
 	int eng_VMINOR;
 	int eng_VPATCH;
 	GLFWwindow* window;
+	uint32_t screen_width;
+	uint32_t screen_height;
 }VK_RendererInfo;
 
 class VK_Renderer
@@ -69,12 +71,15 @@ private:
 		VkPhysicalDeviceFeatures* pEnabledFeatures;
 		VkAllocationCallbacks* allocs;
 	}VK_DeviceInfo;
-	typedef struct VK_QueueInfo
+	typedef struct VK_SwapchainInfo
 	{
+		uint32_t screen_width;
+		uint32_t screen_height;
+		VkPhysicalDevice* physicalDevice;
+		VkSurfaceKHR* surface;
 		VkDevice* device;
-		uint32_t queueFamilyIndex;
-		uint32_t queueIndex;
-	}VK_QueueInfo;
+		VkAllocationCallbacks* allocs;
+	}VK_SwapchainInfo;
 private:
 	//VK_instance class maintains lifecycle of vkInstance
 	class VK_Instance
@@ -130,14 +135,30 @@ private:
 		VkDevice* getDevice();
 		VkQueue* getPresentQueue();
 		VkQueue* getGraphicsQueue();
+		VkSemaphore* getImageAvailableSemaphore();
+		VkSemaphore* getRenderingFinishedSemaphore();
 	private:
 		VkDevice* device;
 		VkAllocationCallbacks* allocs;
 		VkQueue* graphicsQueue;
 		VkQueue* presentQueue;
+		VkSemaphore* imageAvailableSemaphore;
+		VkSemaphore* renderingFinishedSemaphore;
 
 		uint32_t presentQueueFamilyIndex;
 		uint32_t graphicsQueueFamilyIndex;
+	};
+	//VK_SwapChain class maintains lifecycle of vkSwapchain
+	class VK_Swapchain
+	{
+	public:
+		VK_Swapchain(VK_SwapchainInfo*);
+		~VK_Swapchain();
+
+	private:
+		VkSwapchainKHR* swapchain;
+		VkAllocationCallbacks* allocs;
+		VkDevice* device;
 	};
 public:
 	VK_Renderer(VK_RendererInfo*);
@@ -148,5 +169,7 @@ private:
 	VK_Surface* surface;					//vulkan surface
 	VK_PhysicalDevice* physicalDevice;		//vulkan physical device
 	VK_Device* device;						//vulkan device
-
+	VK_Swapchain* swapchain;                //vulkan swapchain
+	
+	VkAllocationCallbacks* allocs;
 };
