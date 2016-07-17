@@ -181,6 +181,11 @@ VK_Renderer::VK_Swapchain::VK_Swapchain(VK_SwapchainInfo* swapinfo)
 	device = swapinfo->device;
 }
 
+VkSwapchainKHR* VK_Renderer::VK_Swapchain::getSwapchain()
+{
+	return swapchain;
+}
+
 VK_Renderer::VK_Swapchain::~VK_Swapchain()
 {
 	vkDestroySwapchainKHR(*device,*swapchain,allocs);

@@ -95,6 +95,91 @@ VK_Renderer::VK_Renderer(VK_RendererInfo* rinfo)
 	}
 }
 
+bool VK_Renderer::Draw()
+{
+	//obtain an image which we would like to present
+	uint32_t image_index;
+	VkResult result = vkAcquireNextImageKHR(*device->getDevice(), *swapchain->getSwapchain(), 
+											UINT64_MAX, *device->getImageAvailableSemaphore(), 
+											VK_NULL_HANDLE, &image_index);
+	switch (result)
+	{
+	case VK_SUCCESS:
+		break;
+	case VK_SUBOPTIMAL_KHR:
+		break;
+	case VK_ERROR_OUT_OF_DATE_KHR:
+		std::cout << "Swapchain is out of date!\n";
+		return false;
+	default:
+		std::cout << "Problem occurred during swap chain image acquisition!";
+		return false;
+	}
+
+	//present queue to swapchain for rendering
+	if(!SubmitQueue()) return false;
+
+	//present queue to swapchain for presentation
+	if(!PresentQueue(&image_index)) return false;
+
+	return true;
+}
+
+bool VK_Renderer::SubmitQueue()
+{
+	//submit a queue to the swap chain for rendering
+	VkPipelineStageFlags wait_dst_stage_mask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+	VkSubmitInfo subinfo;
+	subinfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	subinfo.pNext = nullptr;
+	subinfo.waitSemaphoreCount = 1;
+	subinfo.pWaitSemaphores = device->getImageAvailableSemaphore();
+	subinfo.pWaitDstStageMask = &wait_dst_stage_mask;
+	subinfo.commandBufferCount = 1;
+	//subinfo.pCommandBuffers = 
+	subinfo.signalSemaphoreCount = 1;
+	subinfo.pSignalSemaphores = device->getRenderingFinishedSemaphore();
+
+	if (vkQueueSubmit(*device->getPresentQueue(), 1, &subinfo, VK_NULL_HANDLE) != VK_SUCCESS)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool VK_Renderer::PresentQueue(uint32_t* image_index)
+{
+	VkResult result;
+	//submit a queue to the swap chain for presentation
+	VkPresentInfoKHR presinfo;
+	presinfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+	presinfo.pNext = nullptr;
+	presinfo.waitSemaphoreCount = 1;
+	presinfo.pWaitSemaphores = device->getRenderingFinishedSemaphore();
+	presinfo.swapchainCount = 1;
+	presinfo.pSwapchains = swapchain->getSwapchain();
+	presinfo.pImageIndices = image_index;
+	presinfo.pResults = nullptr;
+
+	result = vkQueuePresentKHR(*device->getPresentQueue(), &presinfo);
+
+	switch (result)
+	{
+	case VK_SUCCESS:
+		break;
+	case VK_SUBOPTIMAL_KHR:
+	case VK_ERROR_OUT_OF_DATE_KHR:
+		return false;
+	default:
+		std::cout << "Problem occurred during swapchain image presentation!\n";
+		return false;
+	}
+
+	return true;
+}
+
 VK_Renderer::~VK_Renderer()
 {
 	std::cout << "Destroying Vulkan Swapchain Instance\n";

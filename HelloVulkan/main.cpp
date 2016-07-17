@@ -41,6 +41,11 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
+	while (!glfwWindowShouldClose(window))
+	{
+		
+		glfwPollEvents();
+	}
 	//Destruction Segment
 	cout << "\nDestroying Renderer\n";
 	if (renderer != nullptr) delete renderer;

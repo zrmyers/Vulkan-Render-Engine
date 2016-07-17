@@ -155,6 +155,7 @@ private:
 		VK_Swapchain(VK_SwapchainInfo*);
 		~VK_Swapchain();
 
+		VkSwapchainKHR* getSwapchain();
 	private:
 		VkSwapchainKHR* swapchain;
 		VkAllocationCallbacks* allocs;
@@ -164,12 +165,15 @@ public:
 	VK_Renderer(VK_RendererInfo*);
 	~VK_Renderer();
 
+	bool Draw();
 private:
 	VK_Instance* instance;					//vulkan instance
 	VK_Surface* surface;					//vulkan surface
 	VK_PhysicalDevice* physicalDevice;		//vulkan physical device
 	VK_Device* device;						//vulkan device
-	VK_Swapchain* swapchain;                //vulkan swapchain
-	
-	VkAllocationCallbacks* allocs;
+	VK_Swapchain* swapchain;                //vulkan swapchain	
+	VkAllocationCallbacks* allocs;          //vulkan allocation callbacks
+
+	bool SubmitQueue();
+	bool PresentQueue(uint32_t*);
 };
