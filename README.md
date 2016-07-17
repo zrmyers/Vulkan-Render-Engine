@@ -24,10 +24,12 @@ Vulkance instance wrapper.  Handles creation and destruction of vulkan instance.
 Vulkan physical device wrapper.  Performs logic associated with finding a physical device which support correct vulkan renderer specs.
 ###VK_Device
 Vulkan device wrapper.  Creates and destroys a vulkan device instance, as well as the proper queues as determined from the physical device.
-###VK_Queue
-Vulkan Queue wrapper.  Obtains queue from device, and controls access to queue.
 ###VK_Surface
 Vulkan Surface wrapper.  Maintains a Vulkan Surface.
+
+###VK_Swapchain
+Vulkan Swap chain wrapper.  Creates and destroys a vulkan swap chain.  Allows submission of command buffers.
+
 #Useful Links
 https://software.intel.com/en-us/articles/api-without-secrets-introduction-to-vulkan-part-1  
 https://github.com/KhronosGroup/Vulkan-Docs  
