@@ -6,6 +6,11 @@
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <NestedTypes>
+      <Struct Name="VK_Renderer::VK_SwapchainInfo" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>vk_renderer.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
       <Class Name="VK_Renderer::VK_Instance" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>vk_renderer.h</NewMemberFileName>
@@ -26,11 +31,6 @@
           <NewMemberFileName>vk_renderer.h</NewMemberFileName>
         </TypeIdentifier>
       </Class>
-      <Struct Name="VK_Renderer::VK_QueueInfo" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>vk_renderer.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
       <Struct Name="VK_Renderer::VK_SurfaceInfo" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>vk_renderer.h</NewMemberFileName>
@@ -58,7 +58,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAAACAAAAAAAAABQAAQAAAABAAAAAAAEAAAAAAAA=</HashCode>
+      <HashCode>AAAACAACAAAAABAAChQAAQAAAABAAAAAAQEAAAAAAAA=</HashCode>
       <FileName>vk_renderer.h</FileName>
     </TypeIdentifier>
   </Class>

@@ -82,6 +82,20 @@ VK_Renderer::VK_Device::VK_Device(VK_DeviceInfo* devinfo)
 	{
 		std::cout << "Vulkan Error: Could not create semaphores!\n";
 	}
+
+	commandPool = (VkCommandPool*)malloc(sizeof(VkCommandPool));
+
+	//information to create a command pool
+	VkCommandPoolCreateInfo cmd_pool_create_info;
+	cmd_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	cmd_pool_create_info.pNext = nullptr;
+	cmd_pool_create_info.flags = 0;
+	cmd_pool_create_info.queueFamilyIndex = presentQueueFamilyIndex;
+
+	if (vkCreateCommandPool(*device, &cmd_pool_create_info, allocs, commandPool) != VK_SUCCESS)
+	{
+		std::cout << "Could not create command pool!\n";
+	}
 }
 
 VkDevice* VK_Renderer::VK_Device::getDevice()
@@ -110,10 +124,27 @@ VkSemaphore* VK_Renderer::VK_Device::getRenderingFinishedSemaphore()
 	return renderingFinishedSemaphore;
 }
 
+void VK_Renderer::VK_Device::allocateCommandBuffers(uint32_t count, VkCommandBuffer* buffers)
+{
+	VkCommandBufferAllocateInfo cmdBuffAllocInfo;
+	cmdBuffAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	cmdBuffAllocInfo.pNext = nullptr;
+	cmdBuffAllocInfo.commandPool = *commandPool;
+	cmdBuffAllocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	cmdBuffAllocInfo.commandBufferCount = count;
+
+	if (vkAllocateCommandBuffers(*device, &cmdBuffAllocInfo, buffers) != VK_SUCCESS)
+	{
+		std::cout << "Vulkan Error: Could not allocate command buffers!\n";
+	}
+}
+
 VK_Renderer::VK_Device::~VK_Device()
 {
 	if (device != VK_NULL_HANDLE)
 	{
+		free((void*)commandPool);
+
 		vkQueueWaitIdle(*graphicsQueue);
 		free((void*)graphicsQueue);
 

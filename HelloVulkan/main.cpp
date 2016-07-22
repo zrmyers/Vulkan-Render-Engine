@@ -43,7 +43,13 @@ int main(int argc, char** argv)
 
 	while (!glfwWindowShouldClose(window))
 	{
-		
+
+		//swap image buffers
+		if (!renderer->swap())
+		{
+			cout << "Bad Swap\n";
+		}
+
 		glfwPollEvents();
 	}
 	//Destruction Segment

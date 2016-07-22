@@ -137,6 +137,9 @@ private:
 		VkQueue* getGraphicsQueue();
 		VkSemaphore* getImageAvailableSemaphore();
 		VkSemaphore* getRenderingFinishedSemaphore();
+
+		void allocateCommandBuffers(uint32_t, VkCommandBuffer*);
+
 	private:
 		VkDevice* device;
 		VkAllocationCallbacks* allocs;
@@ -144,6 +147,7 @@ private:
 		VkQueue* presentQueue;
 		VkSemaphore* imageAvailableSemaphore;
 		VkSemaphore* renderingFinishedSemaphore;
+		VkCommandPool* commandPool;
 
 		uint32_t presentQueueFamilyIndex;
 		uint32_t graphicsQueueFamilyIndex;
@@ -156,6 +160,7 @@ private:
 		~VK_Swapchain();
 
 		VkSwapchainKHR* getSwapchain();
+		uint32_t getSwapchainImageCount();
 	private:
 		VkSwapchainKHR* swapchain;
 		VkAllocationCallbacks* allocs;
@@ -165,7 +170,7 @@ public:
 	VK_Renderer(VK_RendererInfo*);
 	~VK_Renderer();
 
-	bool Draw();
+	bool swap();
 private:
 	VK_Instance* instance;					//vulkan instance
 	VK_Surface* surface;					//vulkan surface
@@ -174,6 +179,8 @@ private:
 	VK_Swapchain* swapchain;                //vulkan swapchain	
 	VkAllocationCallbacks* allocs;          //vulkan allocation callbacks
 
-	bool SubmitQueue();
+	std::vector<VkCommandBuffer> presentQueueCmdBuffers;
+
+	bool SubmitQueue(uint32_t);
 	bool PresentQueue(uint32_t*);
 };

@@ -92,10 +92,24 @@ VK_Renderer::VK_Renderer(VK_RendererInfo* rinfo)
 	if ((swapchain = new VK_Swapchain(&swapInfo)) == nullptr)
 	{
 		std::cout << "Error: Failed to create swapchain!\n";
+		return;
 	}
+
+	//need a command buffer for each image
+	uint32_t swapchain_image_count = swapchain->getSwapchainImageCount();
+	if (swapchain_image_count <= 0)
+	{
+		std::cout << "Error: Not enough images for swapchain";
+
+	}
+	
+	presentQueueCmdBuffers.resize(swapchain_image_count);
+
+	device->allocateCommandBuffers(swapchain_image_count, &presentQueueCmdBuffers[0]);
+
 }
 
-bool VK_Renderer::Draw()
+bool VK_Renderer::swap()
 {
 	//obtain an image which we would like to present
 	uint32_t image_index;
@@ -117,7 +131,7 @@ bool VK_Renderer::Draw()
 	}
 
 	//present queue to swapchain for rendering
-	if(!SubmitQueue()) return false;
+	if(!SubmitQueue(image_index)) return false;
 
 	//present queue to swapchain for presentation
 	if(!PresentQueue(&image_index)) return false;
@@ -125,7 +139,7 @@ bool VK_Renderer::Draw()
 	return true;
 }
 
-bool VK_Renderer::SubmitQueue()
+bool VK_Renderer::SubmitQueue(uint32_t image_index)
 {
 	//submit a queue to the swap chain for rendering
 	VkPipelineStageFlags wait_dst_stage_mask = VK_PIPELINE_STAGE_TRANSFER_BIT;
@@ -137,7 +151,7 @@ bool VK_Renderer::SubmitQueue()
 	subinfo.pWaitSemaphores = device->getImageAvailableSemaphore();
 	subinfo.pWaitDstStageMask = &wait_dst_stage_mask;
 	subinfo.commandBufferCount = 1;
-	//subinfo.pCommandBuffers = 
+	subinfo.pCommandBuffers = &presentQueueCmdBuffers[image_index];
 	subinfo.signalSemaphoreCount = 1;
 	subinfo.pSignalSemaphores = device->getRenderingFinishedSemaphore();
 
