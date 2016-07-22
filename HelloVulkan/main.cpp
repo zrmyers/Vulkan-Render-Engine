@@ -41,11 +41,16 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
+	if (!renderer->recordBuffers())
+	{
+		cout << "Failed to record command buffers!\n";
+	}
+
 	while (!glfwWindowShouldClose(window))
 	{
 
 		//swap image buffers
-		if (!renderer->swap())
+		if (!renderer->swapBuffers())
 		{
 			cout << "Bad Swap\n";
 		}

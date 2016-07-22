@@ -70,6 +70,9 @@ VK_Renderer::VK_Renderer(VK_RendererInfo* rinfo)
 	devInfo.pEnabledFeatures = nullptr;
 	devInfo.allocs = nullptr;
 
+	presentQueueFamilyIndex = devInfo.presentQueueFamilyIndex;
+	graphicsQueueFamilyIndex = devInfo.graphicsQueueFamilyIndex;
+
 	//create logical device object
 	std::cout << "Creating Vulkan Device Instance\n";
 	if ((device = new VK_Device(&devInfo)) == nullptr)
@@ -109,7 +112,100 @@ VK_Renderer::VK_Renderer(VK_RendererInfo* rinfo)
 
 }
 
-bool VK_Renderer::swap()
+bool VK_Renderer::recordBuffers()
+{
+	uint32_t image_count = (uint32_t) presentQueueCmdBuffers.size();
+
+	std::vector<VkImage> swapchainImages(image_count);
+
+	if (vkGetSwapchainImagesKHR(*device->getDevice(), *swapchain->getSwapchain(), &image_count, &swapchainImages[0]) != VK_SUCCESS)
+	{
+		std::cout << "Could not get swapchain images!\n";
+		return false;
+	}
+
+	VkCommandBufferBeginInfo cmdBufferBeginInfo;
+	cmdBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	cmdBufferBeginInfo.pNext = nullptr;
+	cmdBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+	cmdBufferBeginInfo.pInheritanceInfo = nullptr;
+
+	VkClearColorValue clear_color = {
+		{1.0f, 0.8f, 0.4f, 0.0f}
+	};
+
+	VkImageSubresourceRange isr;
+	isr.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	isr.baseMipLevel = 0;
+	isr.levelCount = 1;
+	isr.baseArrayLayer = 0;
+	isr.layerCount = 1;
+
+	for (uint32_t i = 0; i < image_count; i++)
+	{
+		VkImageMemoryBarrier ptc;
+		ptc.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		ptc.pNext = nullptr;
+		ptc.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		ptc.dstAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
+		ptc.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		ptc.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		ptc.srcQueueFamilyIndex = presentQueueFamilyIndex;
+		ptc.dstQueueFamilyIndex = presentQueueFamilyIndex;
+		ptc.image = swapchainImages[i];
+		ptc.subresourceRange = isr;
+		
+		VkImageMemoryBarrier ctp;
+		ctp.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+		ctp.pNext = nullptr;
+		ctp.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		ctp.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		ctp.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		ctp.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		ctp.srcQueueFamilyIndex = presentQueueFamilyIndex;
+		ctp.dstQueueFamilyIndex = presentQueueFamilyIndex;
+		ctp.image = swapchainImages[i];
+		ctp.subresourceRange = isr;
+
+		vkBeginCommandBuffer(presentQueueCmdBuffers[i], &cmdBufferBeginInfo);
+
+		vkCmdPipelineBarrier(
+			presentQueueCmdBuffers[i],
+			VK_PIPELINE_STAGE_TRANSFER_BIT,
+			VK_PIPELINE_STAGE_TRANSFER_BIT,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &ptc
+		);
+
+		vkCmdClearColorImage(
+			presentQueueCmdBuffers[i],
+			swapchainImages[i],
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			&clear_color,
+			1,
+			&isr
+		);
+
+		vkCmdPipelineBarrier(
+			presentQueueCmdBuffers[i],
+			VK_PIPELINE_STAGE_TRANSFER_BIT,
+			VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &ctp
+		);
+
+		if (vkEndCommandBuffer(presentQueueCmdBuffers[i]) != VK_SUCCESS)
+		{
+			std::cout << "Could not record command buffers!\n";
+		}
+	}
+}
+
+bool VK_Renderer::swapBuffers()
 {
 	//obtain an image which we would like to present
 	uint32_t image_index;

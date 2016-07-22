@@ -170,7 +170,8 @@ public:
 	VK_Renderer(VK_RendererInfo*);
 	~VK_Renderer();
 
-	bool swap();
+	bool recordBuffers();
+	bool swapBuffers();
 private:
 	VK_Instance* instance;					//vulkan instance
 	VK_Surface* surface;					//vulkan surface
@@ -178,6 +179,9 @@ private:
 	VK_Device* device;						//vulkan device
 	VK_Swapchain* swapchain;                //vulkan swapchain	
 	VkAllocationCallbacks* allocs;          //vulkan allocation callbacks
+
+	uint32_t presentQueueFamilyIndex;
+	uint32_t graphicsQueueFamilyIndex;
 
 	std::vector<VkCommandBuffer> presentQueueCmdBuffers;
 
