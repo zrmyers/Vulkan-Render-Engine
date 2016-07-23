@@ -1,4 +1,4 @@
-# HelloVulkan
+# Vulkan Render Engine
 Project utilizing Vulkan API
 
 # Introduction
