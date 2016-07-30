@@ -1,6 +1,6 @@
-#include "vk_renderer.h"
+#include "vk_physicaldevice.h"
 
-VK_Renderer::VK_PhysicalDevice::VK_PhysicalDevice(VK_PhysicalDeviceInfo* physInfo)
+VK_PhysicalDevice::VK_PhysicalDevice(VK_PhysicalDeviceInfo* physInfo)
 {
 	VkResult result;
 	uint32_t physicalDeviceCount;
@@ -45,7 +45,7 @@ VK_Renderer::VK_PhysicalDevice::VK_PhysicalDevice(VK_PhysicalDeviceInfo* physInf
 	}
 }
 
-bool VK_Renderer::VK_PhysicalDevice::checkProperties(VkPhysicalDevice phydev, VK_PhysicalDeviceInfo* info)
+bool VK_PhysicalDevice::checkProperties(VkPhysicalDevice phydev, VK_PhysicalDeviceInfo* info)
 {
 	VkPhysicalDeviceProperties properties;
 	VkPhysicalDeviceFeatures features;
@@ -59,9 +59,9 @@ bool VK_Renderer::VK_PhysicalDevice::checkProperties(VkPhysicalDevice phydev, VK
 	uint32_t api_patch = VK_VERSION_PATCH(properties.apiVersion);
 
 	//make sure maximal screen dimmensions are supported as well as minimal api is supported
-	if ((api_major < info->minAPIVersionMajor) &&
-		(api_minor < info->minAPIVersionMinor) &&
-		(api_patch < info->minAPIVersionPatch) &&
+	if ((api_major < VK_VERSION_MAJOR(info->apiversion)) &&
+		(api_minor < VK_VERSION_MINOR(info->apiversion)) &&
+		(api_patch < VK_VERSION_PATCH(info->apiversion)) &&
 		(properties.limits.maxImageDimension2D < info->maxDimm2D))
 	{
 		std::cout << "Physical device " << phydev << " does not support required parameters!" << std::endl;
@@ -96,12 +96,12 @@ bool VK_Renderer::VK_PhysicalDevice::checkProperties(VkPhysicalDevice phydev, VK
 	return false;
 }
 
-uint32_t VK_Renderer::VK_PhysicalDevice::getGraphicsQueueFamilyIndex()
+uint32_t VK_PhysicalDevice::getGraphicsQueueFamilyIndex()
 {
 	return graphics_queue_family_index;
 }
 
-uint32_t VK_Renderer::VK_PhysicalDevice::getPresentationQueueFamilyIndex(VkSurfaceKHR* surface)
+uint32_t VK_PhysicalDevice::getPresentationQueueFamilyIndex(VkSurfaceKHR* surface)
 {
 	VkBool32 result;
 	vkGetPhysicalDeviceSurfaceSupportKHR(*physicalDevice, presentation_queue_family_index, *surface, &result);
@@ -137,12 +137,12 @@ uint32_t VK_Renderer::VK_PhysicalDevice::getPresentationQueueFamilyIndex(VkSurfa
 	return presentation_queue_family_index;
 }
 
-VkPhysicalDevice* VK_Renderer::VK_PhysicalDevice::getPhysicalDevice()
+VkPhysicalDevice* VK_PhysicalDevice::getPhysicalDevice()
 {
 	return physicalDevice;
 }
 
-VK_Renderer::VK_PhysicalDevice::~VK_PhysicalDevice()
+VK_PhysicalDevice::~VK_PhysicalDevice()
 {
 	free((void*)physicalDevice);
 }

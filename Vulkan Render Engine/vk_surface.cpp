@@ -1,6 +1,6 @@
-#include "vk_renderer.h"
+#include "vk_surface.h"
 
-VK_Renderer::VK_Surface::VK_Surface(VK_SurfaceInfo* sinfo)
+VK_Surface::VK_Surface(VK_SurfaceInfo* sinfo)
 {
 	VkResult result;
 	surface = (VkSurfaceKHR*)malloc(sizeof(VkSurfaceKHR));
@@ -13,12 +13,12 @@ VK_Renderer::VK_Surface::VK_Surface(VK_SurfaceInfo* sinfo)
 	allocs = sinfo->allocs;
 }
 
-VkSurfaceKHR* VK_Renderer::VK_Surface::getSurface()
+VkSurfaceKHR* VK_Surface::getSurface()
 {
 	return surface;
 }
 
-VK_Renderer::VK_Surface::~VK_Surface()
+VK_Surface::~VK_Surface()
 {
 	vkDestroySurfaceKHR(*instance, *surface, allocs);
 	free((void*)surface);

@@ -1,6 +1,6 @@
-#include "vk_renderer.h"
+#include "vk_swapchain.h"
 
-VK_Renderer::VK_Swapchain::VK_Swapchain(VK_SwapchainInfo* swapinfo)
+VK_Swapchain::VK_Swapchain(VK_SwapchainInfo* swapinfo)
 {
 	swapchain = (VkSwapchainKHR*)malloc(sizeof(VkSwapchainKHR));
 	allocs = swapinfo->allocs;
@@ -181,12 +181,12 @@ VK_Renderer::VK_Swapchain::VK_Swapchain(VK_SwapchainInfo* swapinfo)
 	device = swapinfo->device;
 }
 
-VkSwapchainKHR* VK_Renderer::VK_Swapchain::getSwapchain()
+VkSwapchainKHR* VK_Swapchain::getSwapchain()
 {
 	return swapchain;
 }
 
-uint32_t VK_Renderer::VK_Swapchain::getSwapchainImageCount()
+uint32_t VK_Swapchain::getSwapchainImageCount()
 {
 	uint32_t image_count = 0;
 	if ((vkGetSwapchainImagesKHR(*device, *swapchain, &image_count, nullptr) != VK_SUCCESS) || (image_count ==0))
@@ -196,7 +196,7 @@ uint32_t VK_Renderer::VK_Swapchain::getSwapchainImageCount()
 	return image_count;
 }
 
-VK_Renderer::VK_Swapchain::~VK_Swapchain()
+VK_Swapchain::~VK_Swapchain()
 {
 	vkDestroySwapchainKHR(*device,*swapchain,allocs);
 	free((void*)swapchain);

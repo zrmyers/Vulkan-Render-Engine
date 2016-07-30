@@ -1,10 +1,10 @@
-#include "vk_renderer.h"
+#include "vk_instance.h"
 
-VK_Renderer::VK_Instance::VK_Instance(VK_InstanceInfo* instInfo)
+
+VK_Instance::VK_Instance(VK_InstanceInfo* instInfo)
 {
 	//allocate necessary memory
 	VkResult result;
-	instance = (VkInstance*)malloc(sizeof(VkInstance));
 
 	//get application info
 	VkApplicationInfo app_info;
@@ -54,13 +54,54 @@ VK_Renderer::VK_Instance::VK_Instance(VK_InstanceInfo* instInfo)
 
 	allocs = instInfo->allocs; // must obtain elsewhere 
 
-	if ((result = vkCreateInstance(&inst_info, allocs, instance)) != VK_SUCCESS)
+	if ((result = vkCreateInstance(&inst_info, allocs, &instance)) != VK_SUCCESS)
 	{
 		std::cout << "VK Error: Failed to create vulkan instance!\n";
+		return;
 	}
+
+	this->apiversion = instInfo->apiVersion;
+
+	physicalDevice = nullptr;
+	device = nullptr;
+
+	return;
 }
 
-bool VK_Renderer::VK_Instance::checkExtensionAvailability(const char* extension_name, std::vector<VkExtensionProperties> available_extensions)
+VkInstance* VK_Instance::getInstance()
+{
+	return &instance;
+}
+
+VK_Swapchain* VK_Instance::createSwapchain(VkSurfaceKHR* surface,uint32_t screen_width,uint32_t screen_height)
+{
+	if (device == nullptr)
+	{
+		//we need to create a logical device
+		findDevice(surface);
+	}
+
+	VK_Swapchain* swapchain;
+	//information to create swap chain object
+	VK_SwapchainInfo swapInfo;
+	swapInfo.physicalDevice = physicalDevice->getPhysicalDevice();
+	swapInfo.surface = surface;
+	swapInfo.screen_width = screen_width;
+	swapInfo.screen_height = screen_height;
+	swapInfo.device = device->getDevice();
+	swapInfo.allocs = nullptr;
+
+	//create swap chain object
+	std::cout << "Creating Vulkan Swapchain Instance\n";
+	if ((swapchain = new VK_Swapchain(&swapInfo)) == nullptr)
+	{
+		std::cout << "Error: Failed to create swapchain!\n";
+	}
+
+	return swapchain;
+}
+
+bool VK_Instance::checkExtensionAvailability(const char* extension_name, std::vector<VkExtensionProperties> available_extensions)
 {
 	for (size_t i = 0; i < available_extensions.size(); i++)
 	{
@@ -72,13 +113,38 @@ bool VK_Renderer::VK_Instance::checkExtensionAvailability(const char* extension_
 	return false;
 }
 
-VkInstance* VK_Renderer::VK_Instance::getInstance()
+void VK_Instance::findDevice(VkSurfaceKHR* surface)
 {
-	return instance;
+	VK_PhysicalDeviceInfo phys_info;
+	VK_DeviceInfo dev_info;
+	std::vector<const char*> extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+	phys_info.instance = &this->instance;
+	phys_info.apiversion = apiversion;
+	phys_info.maxDimm2D = 4096;  //this may need to come from somewhere else
+	
+	//find an appropriate physical device
+	physicalDevice = new VK_PhysicalDevice(&phys_info);
+
+	//now create a device
+	dev_info.physicalDevice = physicalDevice->getPhysicalDevice();
+	dev_info.graphicsQueueFamilyIndex = physicalDevice->getGraphicsQueueFamilyIndex();
+	dev_info.presentQueueFamilyIndex = physicalDevice->getPresentationQueueFamilyIndex(surface);
+	dev_info.enabledLayerCount = 0;
+	dev_info.ppEnabledLayerNames = nullptr;
+	dev_info.enabledExtensionCount = (uint32_t) extensions.size();
+	dev_info.ppEnabledExtensionNames = &extensions[0];
+	dev_info.pEnabledFeatures = nullptr;
+	dev_info.allocs = allocs;
+	
+	device = new VK_Device(&dev_info);
+
+	return;
 }
 
-VK_Renderer::VK_Instance::~VK_Instance()
+VK_Instance::~VK_Instance()
 {
-	vkDestroyInstance(*instance, allocs);
-	free((void*)instance);
+	delete device;
+	delete physicalDevice;
+	vkDestroyInstance(instance, allocs);
 }

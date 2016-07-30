@@ -1,6 +1,6 @@
-#include "vk_renderer.h"
+#include "vk_device.h"
 
-VK_Renderer::VK_Device::VK_Device(VK_DeviceInfo* devinfo)
+VK_Device::VK_Device(VK_DeviceInfo* devinfo)
 {
 	if ((devinfo->physicalDevice) == VK_NULL_HANDLE)
 	{
@@ -98,33 +98,33 @@ VK_Renderer::VK_Device::VK_Device(VK_DeviceInfo* devinfo)
 	}
 }
 
-VkDevice* VK_Renderer::VK_Device::getDevice()
+VkDevice* VK_Device::getDevice()
 {
 	return device;
 }
 
-VkQueue* VK_Renderer::VK_Device::getPresentQueue()
+VkQueue* VK_Device::getPresentQueue()
 {
 	return presentQueue;
 }
 
 
-VkQueue* VK_Renderer::VK_Device::getGraphicsQueue()
+VkQueue* VK_Device::getGraphicsQueue()
 {
 	return graphicsQueue;
 }
 
-VkSemaphore* VK_Renderer::VK_Device::getImageAvailableSemaphore()
+VkSemaphore* VK_Device::getImageAvailableSemaphore()
 {
 	return imageAvailableSemaphore;
 }
 
-VkSemaphore* VK_Renderer::VK_Device::getRenderingFinishedSemaphore()
+VkSemaphore* VK_Device::getRenderingFinishedSemaphore()
 {
 	return renderingFinishedSemaphore;
 }
 
-void VK_Renderer::VK_Device::allocateCommandBuffers(uint32_t count, VkCommandBuffer* buffers)
+void VK_Device::allocateCommandBuffers(uint32_t count, VkCommandBuffer* buffers)
 {
 	VkCommandBufferAllocateInfo cmdBuffAllocInfo;
 	cmdBuffAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -139,7 +139,7 @@ void VK_Renderer::VK_Device::allocateCommandBuffers(uint32_t count, VkCommandBuf
 	}
 }
 
-VK_Renderer::VK_Device::~VK_Device()
+VK_Device::~VK_Device()
 {
 	if (device != VK_NULL_HANDLE)
 	{
