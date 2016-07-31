@@ -41,9 +41,6 @@
     <ClInclude Include="common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="vk_renderer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="render_engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>

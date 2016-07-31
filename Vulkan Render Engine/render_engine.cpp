@@ -98,6 +98,39 @@ void RenderEngine::attachWindow(GLFWwindow* window)
 	contexts.push_back(context);
 }
 
+void RenderEngine::pollWindowResize()
+{
+	for( size_t i = 0; i < contexts.size(); i++)
+	{
+		RenderContext context = contexts.at(i);
+
+		//if the window size has changed the surface and swapchain need to be rebuilt
+		if (context.surface->pollResize())
+		{
+			
+			vkQueueWaitIdle(*presentQueue);
+			vkQueueWaitIdle(*graphicsQueue);
+
+			delete context.swapchain;
+
+			context.swapchain = instance->createSwapchain(context.surface->getSurface(), context.surface->getWidth(), context.surface->getHeight());
+
+			context.imageCount = context.swapchain->getImageCount();
+
+			context.buffers.clear();
+			context.buffers.resize(context.imageCount);
+
+			device->allocateCommandBuffers(commandPool, &context.buffers[0], context.imageCount);
+
+			contexts.at(i) = context;
+
+			recordBuffers();
+		}
+
+		
+	}
+}
+
 void RenderEngine::recordBuffers()
 {
 	for (RenderContext context : contexts)

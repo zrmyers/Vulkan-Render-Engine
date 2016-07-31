@@ -15,8 +15,18 @@ public:
 	~VK_Surface();
 
 	VkSurfaceKHR* getSurface();
+
+	bool pollResize();
+
+	uint32_t getWidth();
+	uint32_t getHeight();
 private:
 	VkSurfaceKHR* surface;
 	VkAllocationCallbacks* allocs;
 	VkInstance* instance;
+	GLFWwindow* window;
+
+	int width, height;
+
+	void resize();
 };

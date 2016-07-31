@@ -17,6 +17,7 @@ typedef struct RenderEngineInfo
 
 class RenderEngine
 {
+//private data types
 private:
 	typedef struct RenderContext
 	{
@@ -26,12 +27,14 @@ private:
 		uint32_t imageCount;
 		std::vector<VkCommandBuffer> buffers; //when multithreading, this will need to be local for each thread
 	}RenderContext;
-
+//public methods
 public:
 	RenderEngine(RenderEngineInfo*);
 	~RenderEngine();
 
 	void attachWindow(GLFWwindow*);
+
+	void pollWindowResize();
 
 	void recordBuffers();
 	void swapBuffers();
@@ -51,6 +54,5 @@ private:
 	VkQueue* graphicsQueue;
 	VkSemaphore* imageAvailable;
 	VkSemaphore* renderingFinished;
-
 };
 

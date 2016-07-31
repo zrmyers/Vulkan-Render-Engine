@@ -57,7 +57,8 @@ int main()
 	//  poll inputs to make sure events are handled.
 	while (!glfwWindowShouldClose(window))
 	{
-		
+		r_engine->pollWindowResize();
+
 		r_engine->swapBuffers();
 
 		glfwPollEvents();

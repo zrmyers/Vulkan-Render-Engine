@@ -140,7 +140,6 @@
     <ClInclude Include="vk_device.h" />
     <ClInclude Include="vk_instance.h" />
     <ClInclude Include="vk_physicaldevice.h" />
-    <ClInclude Include="vk_renderer.h" />
     <ClInclude Include="vk_surface.h" />
     <ClInclude Include="vk_swapchain.h" />
   </ItemGroup>
