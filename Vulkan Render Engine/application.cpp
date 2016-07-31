@@ -29,16 +29,24 @@ int main()
 	glfwInit();
 	//since we are using Vulkan library from elsewhere, we don't need GLFW to provide one
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	GLFWwindow* window = glfwCreateWindow(1024, 768, "Vulkan Render Engine", nullptr, nullptr);
-	if (!window)
+	GLFWwindow* windowA = glfwCreateWindow(1024, 768, "Vulkan Render Engine", nullptr, nullptr);
+	if (!windowA)
 	{
-		cout << "Failed to create GLFW Window!\n";
+		cout << "Failed to create GLFW Window A!\n";
 		glfwTerminate();
 		return -1;
 	}
 
+	GLFWwindow* windowB = glfwCreateWindow(1024, 768, "Vulkan Render Engine", nullptr, nullptr);
+	if (!windowB)
+	{
+		cout << "Failed to create GLFW Window B!\n";
+		glfwTerminate();
+		return -1;
+	}
 	//change focus to window
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(windowA);
+	glfwMakeContextCurrent(windowB);
 
 	RenderEngineInfo re_info;
 	re_info.applicationName = "Vulkan Render Engine Test App!\n";
@@ -49,14 +57,42 @@ int main()
 	//initialize the rendering engine
 	RenderEngine* r_engine = new RenderEngine(&re_info);
 
-	r_engine->attachWindow(window);
+	r_engine->attachWindow(windowA);
+	r_engine->attachWindow(windowB);
 
 	r_engine->recordBuffers();
 
 	//main loop.  while the window isn't closing, keep running.
 	//  poll inputs to make sure events are handled.
-	while (!glfwWindowShouldClose(window))
+	bool running = true;
+	bool runningA = true;
+	bool runningB = true;
+
+	while (running)
 	{
+		//poll windows
+		if (runningA)
+		{
+			if (glfwWindowShouldClose(windowA))
+			{
+				r_engine->eventWindowDestroyed(windowA);
+				glfwDestroyWindow(windowA);
+				runningA = false;
+			}
+		}
+
+		if (runningB)
+		{
+			if (glfwWindowShouldClose(windowB))
+			{
+				r_engine->eventWindowDestroyed(windowB);
+				glfwDestroyWindow(windowB);
+				runningB = false;
+			}
+		}
+
+		running = runningA || runningB;
+
 		r_engine->pollWindowResize();
 
 		r_engine->swapBuffers();
@@ -69,7 +105,6 @@ int main()
 	//delete the rendering engine
 	delete r_engine;
 	//takedown...
-	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
 }

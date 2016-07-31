@@ -35,6 +35,7 @@ public:
 	void attachWindow(GLFWwindow*);
 
 	void pollWindowResize();
+	void eventWindowDestroyed(GLFWwindow*);
 
 	void recordBuffers();
 	void swapBuffers();

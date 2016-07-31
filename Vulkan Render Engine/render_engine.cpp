@@ -131,6 +131,23 @@ void RenderEngine::pollWindowResize()
 	}
 }
 
+void RenderEngine::eventWindowDestroyed(GLFWwindow* window)
+{
+	for (int i = (int) contexts.size() - 1; i >= 0; i--)
+	{
+		if (contexts[i].window == window)
+		{
+			delete contexts[i].surface;
+			delete contexts[i].swapchain;
+
+			contexts[i].buffers.clear();
+			contexts[i].buffers.shrink_to_fit();
+
+			contexts.erase(contexts.begin() + i);
+		}
+	}
+}
+
 void RenderEngine::recordBuffers()
 {
 	for (RenderContext context : contexts)
