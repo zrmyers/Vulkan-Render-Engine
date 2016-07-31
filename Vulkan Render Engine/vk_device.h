@@ -21,21 +21,23 @@ public:
 	~VK_Device();
 
 	VkDevice* getDevice();
-	VkQueue* getPresentQueue();
-	VkQueue* getGraphicsQueue();
-	VkSemaphore* getImageAvailableSemaphore();
-	VkSemaphore* getRenderingFinishedSemaphore();
+	uint32_t getPresentQueueFamilyIndex();
+	uint32_t getGraphicsQueueFamilyIndex();
 
-	void allocateCommandBuffers(uint32_t, VkCommandBuffer*);
+	
+	void createCommandPool(VkCommandPool*,uint32_t);
+	void createSemaphore(VkSemaphore*);
+
+	void allocateCommandBuffers(VkCommandPool*, VkCommandBuffer*, uint32_t);
+
+	void getQueue(VkQueue*, uint32_t);
+
+	void destroyCommandPool(VkCommandPool*);
+	void destroySemaphore(VkSemaphore*);
 
 private:
 	VkDevice* device;
 	VkAllocationCallbacks* allocs;
-	VkQueue* graphicsQueue;
-	VkQueue* presentQueue;
-	VkSemaphore* imageAvailableSemaphore;
-	VkSemaphore* renderingFinishedSemaphore;
-	VkCommandPool* commandPool;
 
 	uint32_t presentQueueFamilyIndex;
 	uint32_t graphicsQueueFamilyIndex;

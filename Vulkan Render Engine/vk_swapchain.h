@@ -18,7 +18,7 @@ public:
 	~VK_Swapchain();
 
 	VkSwapchainKHR* getSwapchain();
-	uint32_t getSwapchainImageCount();
+	uint32_t getImageCount();
 private:
 	VkSwapchainKHR* swapchain;
 	VkAllocationCallbacks* allocs;

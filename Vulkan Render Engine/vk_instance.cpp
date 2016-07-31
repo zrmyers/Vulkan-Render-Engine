@@ -142,6 +142,11 @@ void VK_Instance::findDevice(VkSurfaceKHR* surface)
 	return;
 }
 
+VK_Device* VK_Instance::getDevice()
+{
+	return device;
+}
+
 VK_Instance::~VK_Instance()
 {
 	delete device;

@@ -31,6 +31,7 @@ public:
 
 	VkInstance* getInstance();
 	VK_Swapchain* createSwapchain(VkSurfaceKHR*,uint32_t,uint32_t);
+	VK_Device* getDevice();
 
 private:
 	//private data
@@ -38,7 +39,6 @@ private:
 	VkAllocationCallbacks* allocs;	
 	VK_PhysicalDevice* physicalDevice;
 	VK_Device* device;
-
 	uint32_t apiversion;
 
 	//private methods

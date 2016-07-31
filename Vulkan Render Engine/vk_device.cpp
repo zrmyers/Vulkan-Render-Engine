@@ -61,41 +61,6 @@ VK_Device::VK_Device(VK_DeviceInfo* devinfo)
 
 	presentQueueFamilyIndex = devinfo->presentQueueFamilyIndex;
 	graphicsQueueFamilyIndex = devinfo->graphicsQueueFamilyIndex;
-
-	//let's build some q's
-	graphicsQueue = (VkQueue*)malloc(sizeof(VkQueue));
-	presentQueue = (VkQueue*)malloc(sizeof(VkQueue));
-
-	vkGetDeviceQueue(*device, graphicsQueueFamilyIndex, 0, graphicsQueue);
-	vkGetDeviceQueue(*device, presentQueueFamilyIndex, 0, presentQueue);
-
-	//let's make some semaphores
-	renderingFinishedSemaphore = (VkSemaphore*)malloc(sizeof(VkSemaphore));
-    imageAvailableSemaphore = (VkSemaphore*)malloc(sizeof(VkSemaphore));
-
-	VkSemaphoreCreateInfo semaphinfo;
-	semaphinfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-	semaphinfo.pNext = nullptr;
-	semaphinfo.flags = 0;
-
-	if ((vkCreateSemaphore(*device, &semaphinfo, allocs, renderingFinishedSemaphore) != VK_SUCCESS) || (vkCreateSemaphore(*device, &semaphinfo, allocs, imageAvailableSemaphore) != VK_SUCCESS))
-	{
-		std::cout << "Vulkan Error: Could not create semaphores!\n";
-	}
-
-	commandPool = (VkCommandPool*)malloc(sizeof(VkCommandPool));
-
-	//information to create a command pool
-	VkCommandPoolCreateInfo cmd_pool_create_info;
-	cmd_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	cmd_pool_create_info.pNext = nullptr;
-	cmd_pool_create_info.flags = 0;
-	cmd_pool_create_info.queueFamilyIndex = presentQueueFamilyIndex;
-
-	if (vkCreateCommandPool(*device, &cmd_pool_create_info, allocs, commandPool) != VK_SUCCESS)
-	{
-		std::cout << "Could not create command pool!\n";
-	}
 }
 
 VkDevice* VK_Device::getDevice()
@@ -103,36 +68,67 @@ VkDevice* VK_Device::getDevice()
 	return device;
 }
 
-VkQueue* VK_Device::getPresentQueue()
+uint32_t VK_Device::getPresentQueueFamilyIndex()
 {
-	return presentQueue;
+	return presentQueueFamilyIndex;
 }
 
-
-VkQueue* VK_Device::getGraphicsQueue()
+uint32_t VK_Device::getGraphicsQueueFamilyIndex()
 {
-	return graphicsQueue;
+	return graphicsQueueFamilyIndex;
 }
 
-VkSemaphore* VK_Device::getImageAvailableSemaphore()
+void VK_Device::createSemaphore(VkSemaphore* semaphore)
 {
-	return imageAvailableSemaphore;
+	VkSemaphoreCreateInfo semaphinfo;
+	semaphinfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+	semaphinfo.pNext = nullptr;
+	semaphinfo.flags = 0;
+
+	if (vkCreateSemaphore(*device, &semaphinfo, allocs, semaphore) != VK_SUCCESS)
+	{
+		std::cout << "Vulkan Error: Could not create semaphores!\n";
+	}
 }
 
-VkSemaphore* VK_Device::getRenderingFinishedSemaphore()
+void VK_Device::destroySemaphore(VkSemaphore* semaphore)
 {
-	return renderingFinishedSemaphore;
+	vkDestroySemaphore(*device, *semaphore, allocs);
 }
 
-void VK_Device::allocateCommandBuffers(uint32_t count, VkCommandBuffer* buffers)
+void VK_Device::getQueue(VkQueue* queue, uint32_t queueFamilyIndex)
+{
+	vkGetDeviceQueue(*device, queueFamilyIndex, 0, queue);
+}
+
+void VK_Device::createCommandPool(VkCommandPool* commandPool, uint32_t queueFamilyIndex)
+{
+	VkCommandPoolCreateInfo cmd_pool_create_info;
+	cmd_pool_create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	cmd_pool_create_info.pNext = nullptr;
+	cmd_pool_create_info.flags = 0;
+	cmd_pool_create_info.queueFamilyIndex = queueFamilyIndex;
+
+	if (vkCreateCommandPool(*device, &cmd_pool_create_info, allocs, commandPool) != VK_SUCCESS)
+	{
+		std::cout << "Could not create command pool!\n";
+	}
+}
+
+void VK_Device::destroyCommandPool(VkCommandPool* pool)
+{
+	vkDestroyCommandPool(*device, *pool, allocs);
+}
+
+void VK_Device::allocateCommandBuffers(VkCommandPool* pool,VkCommandBuffer* buffers, uint32_t count )
 {
 	VkCommandBufferAllocateInfo cmdBuffAllocInfo;
 	cmdBuffAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	cmdBuffAllocInfo.pNext = nullptr;
-	cmdBuffAllocInfo.commandPool = *commandPool;
+	cmdBuffAllocInfo.commandPool = *pool;
 	cmdBuffAllocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	cmdBuffAllocInfo.commandBufferCount = count;
-
+	
 	if (vkAllocateCommandBuffers(*device, &cmdBuffAllocInfo, buffers) != VK_SUCCESS)
 	{
 		std::cout << "Vulkan Error: Could not allocate command buffers!\n";
@@ -143,18 +139,6 @@ VK_Device::~VK_Device()
 {
 	if (device != VK_NULL_HANDLE)
 	{
-		free((void*)commandPool);
-
-		vkQueueWaitIdle(*graphicsQueue);
-		free((void*)graphicsQueue);
-
-		vkQueueWaitIdle(*presentQueue);
-		free((void*)presentQueue);
-		
-		free((void*)renderingFinishedSemaphore);
-
-		free((void*)imageAvailableSemaphore);
-
 		vkDeviceWaitIdle(*device);
 		vkDestroyDevice(*device, allocs);
 		free((void*)device);

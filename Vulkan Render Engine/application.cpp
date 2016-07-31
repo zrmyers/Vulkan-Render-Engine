@@ -51,14 +51,18 @@ int main()
 
 	r_engine->attachWindow(window);
 
+	r_engine->recordBuffers();
+
 	//main loop.  while the window isn't closing, keep running.
 	//  poll inputs to make sure events are handled.
 	while (!glfwWindowShouldClose(window))
 	{
+		
+		r_engine->swapBuffers();
 
 		glfwPollEvents();
 	}
-
+	
 	cout << "Vulkan Render Engine Demo Complete...\n";
 
 	//delete the rendering engine
