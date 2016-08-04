@@ -58,9 +58,10 @@ int main()
 	RenderEngine* r_engine = new RenderEngine(&re_info);
 
 	r_engine->attachWindow(windowA);
-	r_engine->attachWindow(windowB);
+	r_engine->setWindowClearColor(windowA,glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-	r_engine->recordBuffers();
+	r_engine->attachWindow(windowB);
+	r_engine->setWindowClearColor(windowB, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));	
 
 	//main loop.  while the window isn't closing, keep running.
 	//  poll inputs to make sure events are handled.
@@ -94,6 +95,11 @@ int main()
 		running = runningA || runningB;
 
 		r_engine->pollWindowResize();
+
+		//draw commands
+
+		//end draw commands
+		r_engine->recordBuffers();
 
 		r_engine->swapBuffers();
 

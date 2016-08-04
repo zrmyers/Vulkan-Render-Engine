@@ -95,6 +95,11 @@ void RenderEngine::attachWindow(GLFWwindow* window)
 
 	device->allocateCommandBuffers(commandPool, &context.buffers[0], context.imageCount);
 
+	context.clear_color.float32[0] = 0.2f;
+	context.clear_color.float32[1] = 0.2f;
+	context.clear_color.float32[2] = 0.2f;
+	context.clear_color.float32[3] = 0.2f;
+
 	contexts.push_back(context);
 }
 
@@ -106,8 +111,7 @@ void RenderEngine::pollWindowResize()
 
 		//if the window size has changed the surface and swapchain need to be rebuilt
 		if (context.surface->pollResize())
-		{
-			
+		{			
 			vkQueueWaitIdle(*presentQueue);
 			vkQueueWaitIdle(*graphicsQueue);
 
@@ -124,10 +128,7 @@ void RenderEngine::pollWindowResize()
 
 			contexts.at(i) = context;
 
-			recordBuffers();
-		}
-
-		
+		}		
 	}
 }
 
@@ -144,6 +145,24 @@ void RenderEngine::eventWindowDestroyed(GLFWwindow* window)
 			contexts[i].buffers.shrink_to_fit();
 
 			contexts.erase(contexts.begin() + i);
+		}
+	}
+}
+
+void RenderEngine::setWindowClearColor(GLFWwindow* window, glm::vec4 color)
+{
+	for (size_t i = 0; i < contexts.size(); i++)
+	{
+		RenderContext context = contexts.at(i);
+
+		if (context.window == window)
+		{
+			context.clear_color.float32[0] = color.r;
+			context.clear_color.float32[1] = color.g;
+			context.clear_color.float32[2] = color.b;
+			context.clear_color.float32[3] = color.a;
+
+			contexts.at(i) = context;
 		}
 	}
 }
@@ -167,9 +186,7 @@ void RenderEngine::recordBuffers()
 		cmdBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 		cmdBufferBeginInfo.pInheritanceInfo = nullptr;
 
-		VkClearColorValue clear_color = {
-			{ 1.0f, 0.8f, 0.4f, 0.0f }
-		};
+		VkClearColorValue clear_color = context.clear_color;
 
 		VkImageSubresourceRange isr;
 		isr.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;

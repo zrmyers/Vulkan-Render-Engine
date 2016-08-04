@@ -36,7 +36,7 @@ bool VK_Surface::pollResize()
 	int w, h;
 	glfwGetWindowSize(window, &w, &h);
 
-	if (width != w || height != h)
+	if ((width != w || height != h) && h != 0 && w != 0)
 	{
 		resize();
 		return true;

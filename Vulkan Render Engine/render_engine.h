@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include <glm.hpp>
 
 class VK_Instance;
 class VK_Surface;
@@ -26,6 +27,7 @@ private:
 		VK_Swapchain* swapchain;
 		uint32_t imageCount;
 		std::vector<VkCommandBuffer> buffers; //when multithreading, this will need to be local for each thread
+		VkClearColorValue clear_color;
 	}RenderContext;
 //public methods
 public:
@@ -33,6 +35,8 @@ public:
 	~RenderEngine();
 
 	void attachWindow(GLFWwindow*);
+
+	void setWindowClearColor(GLFWwindow*,glm::vec4);
 
 	void pollWindowResize();
 	void eventWindowDestroyed(GLFWwindow*);

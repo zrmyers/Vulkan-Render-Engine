@@ -86,7 +86,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Zane\Documents\Visual Studio 2015\Projects\Vulkan-Render-Engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Libraries\glm-0.9.7.6\glm;C:\Users\Zane\Documents\Visual Studio 2015\Projects\Vulkan-Render-Engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Libraries\GLFW 3.2\glfw-3.2.bin.WIN64\lib-vc2015;C:\Users\Zane\Documents\Visual Studio 2015\Projects\Vulkan Render Engine\bin\Vulkan 1.0.17;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -116,7 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Zane\Documents\Visual Studio 2015\Projects\Vulkan-Render-Engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Libraries\glm-0.9.7.6\glm;C:\Users\Zane\Documents\Visual Studio 2015\Projects\Vulkan-Render-Engine\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
