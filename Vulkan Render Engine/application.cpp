@@ -18,8 +18,29 @@
 */
 #include "common.h"
 #include "render_engine.h"
+#include "interpolator.h"
 
 using namespace std;
+
+float step_size;
+
+struct colors
+{
+	enum {red,green,blue};
+};
+
+glm::vec4 red = {1.0f,0.0f,0.0f,1.0f};
+glm::vec4 green = { 0.0f,1.0f,0.0f,1.0f };
+glm::vec4 blue = { 0.0f,0.0f,1.0f,1.0f };
+
+int a_color = colors::red;
+int b_color = colors::blue;
+
+Interpolate_Info a_info;
+Interpolate_Info b_info;
+
+std::vector<glm::vec4> color_table = { red,green,blue };
+std::vector<int> color_transition_table = { colors::green,colors::blue,colors::red };
 
 int main()
 {
@@ -58,16 +79,27 @@ int main()
 	RenderEngine* r_engine = new RenderEngine(&re_info);
 
 	r_engine->attachWindow(windowA);
-	r_engine->setWindowClearColor(windowA,glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	r_engine->setWindowClearColor(windowA,color_table[a_color]);
 
 	r_engine->attachWindow(windowB);
-	r_engine->setWindowClearColor(windowB, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));	
+	r_engine->setWindowClearColor(windowB,color_table[b_color]);	
 
 	//main loop.  while the window isn't closing, keep running.
 	//  poll inputs to make sure events are handled.
 	bool running = true;
 	bool runningA = true;
 	bool runningB = true;
+
+	//prepare interpolation stuff
+	Interpolator interp;
+
+	a_info.current_state.push_back(color_table[a_color]);
+	a_info.desired_state.push_back(color_table[color_transition_table[colors::red]]);
+	a_info.duration = 1000.0f;
+
+	b_info.current_state.push_back(color_table[b_color]);
+	b_info.desired_state.push_back(color_table[color_transition_table[colors::blue]]);
+	b_info.duration = 1000.0f;
 
 	while (running)
 	{
@@ -96,6 +128,32 @@ int main()
 
 		r_engine->pollWindowResize();
 
+		//update commands
+		if (interp.interpolate_linear(&a_info, 0.1f))
+		{
+			//the desired color has been reached
+			a_color = color_transition_table[a_color];
+
+			//need to refresh the interp data
+			a_info.current_state[0] = color_table[a_color];
+			a_info.desired_state[0] = color_table[color_transition_table[a_color]];
+			a_info.duration = 1000.0f;
+		}
+		r_engine->setWindowClearColor(windowA, a_info.current_state[0]);
+
+		if (interp.interpolate_linear(&b_info, 0.1f))
+		{
+			//the desired color has been reached
+			b_color = color_transition_table[b_color];
+
+			//need to refresh the interp data
+			b_info.current_state[0] = color_table[b_color];
+			b_info.desired_state[0] = color_table[color_transition_table[b_color]];
+			b_info.duration = 1000.0f;
+		}
+		r_engine->setWindowClearColor(windowB, b_info.current_state[0]);
+		//end update commands
+
 		//draw commands
 
 		//end draw commands
@@ -114,3 +172,4 @@ int main()
 	glfwTerminate();
 	return 0;
 }
+
