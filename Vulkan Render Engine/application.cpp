@@ -26,12 +26,15 @@ float step_size;
 
 struct colors
 {
-	enum {red,green,blue};
+	enum {red,yellow,green,cyan,blue,magenta};
 };
 
 glm::vec4 red = {1.0f,0.0f,0.0f,1.0f};
+glm::vec4 yellow = { 1.0f,1.0f,0.0f,1.0f };
 glm::vec4 green = { 0.0f,1.0f,0.0f,1.0f };
+glm::vec4 cyan = { 0.0f, 1.0f,1.0f,1.0f };
 glm::vec4 blue = { 0.0f,0.0f,1.0f,1.0f };
+glm::vec4 magenta = { 1.0f,0.0f,1.0f,1.0f };
 
 int a_color = colors::red;
 int b_color = colors::blue;
@@ -39,8 +42,8 @@ int b_color = colors::blue;
 Interpolate_Info a_info;
 Interpolate_Info b_info;
 
-std::vector<glm::vec4> color_table = { red,green,blue };
-std::vector<int> color_transition_table = { colors::green,colors::blue,colors::red };
+std::vector<glm::vec4> color_table = { red,yellow,green,cyan,blue,magenta };
+std::vector<int> color_transition_table = { colors::yellow,colors::green,colors::cyan,colors::blue,colors::magenta,colors::red };
 
 int main()
 {
@@ -50,7 +53,7 @@ int main()
 	glfwInit();
 	//since we are using Vulkan library from elsewhere, we don't need GLFW to provide one
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	GLFWwindow* windowA = glfwCreateWindow(1024, 768, "Vulkan Render Engine", nullptr, nullptr);
+	GLFWwindow* windowA = glfwCreateWindow(1024, 768, "Window A", nullptr, nullptr);
 	if (!windowA)
 	{
 		cout << "Failed to create GLFW Window A!\n";
@@ -58,7 +61,7 @@ int main()
 		return -1;
 	}
 
-	GLFWwindow* windowB = glfwCreateWindow(1024, 768, "Vulkan Render Engine", nullptr, nullptr);
+	GLFWwindow* windowB = glfwCreateWindow(1024, 768, "Window B", nullptr, nullptr);
 	if (!windowB)
 	{
 		cout << "Failed to create GLFW Window B!\n";
