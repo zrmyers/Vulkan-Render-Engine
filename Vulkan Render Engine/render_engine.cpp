@@ -3,6 +3,7 @@
 #include "vk_surface.h"
 #include "vk_swapchain.h"
 #include "vk_device.h"
+#include "vk_graphics_pipeline.h"
 
 #include <stdlib.h>
 #include <vector>
@@ -89,10 +90,76 @@ void RenderEngine::attachWindow(GLFWwindow* window)
 		device->createSemaphore(renderingFinished);
 	}	
 
-	
+	if (pipeline == nullptr)
+	{
+		VK_GraphicsPipelineInfo pipe_info;
+		pipe_info.device = device->getDevice();
+		pipe_info.format = swapchain->getFormat();
+		pipe_info.allocs = nullptr;
+
+		pipeline = new VK_GraphicsPipeline(&pipe_info);
+	}
+
 	context.imageCount = swapchain->getImageCount();
 	context.buffers.resize(context.imageCount);
+	context.image_views.resize(context.imageCount);
+	context.frame_buffers.resize(context.imageCount);
 
+	//get images
+	std::vector<VkImage> images(context.imageCount);
+	images = *swapchain->getImages();
+	
+	//create image views for each image
+	for (size_t i = 0; i < context.imageCount; i++)
+	{
+		VkComponentMapping component;
+		component.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+		component.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+		component.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+		component.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+		VkImageSubresourceRange range;
+		range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		range.baseMipLevel = 0;
+		range.levelCount = 1;
+		range.baseArrayLayer = 0;
+		range.layerCount = 1;
+
+		VkImageViewCreateInfo image_view_create_info;
+		image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		image_view_create_info.pNext = nullptr;
+		image_view_create_info.flags = 0;
+		image_view_create_info.image = images[i];
+		image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		image_view_create_info.format = swapchain->getFormat();
+		image_view_create_info.components = component;
+		image_view_create_info.subresourceRange = range;
+
+		VkResult result;
+		if ((result = vkCreateImageView(*device->getDevice(), &image_view_create_info, nullptr, &context.image_views[i])) != VK_SUCCESS)
+		{
+			std::cout << "Could not create image view for framebuffer!\n";
+		}
+
+		//create the framebuffers
+		VkFramebufferCreateInfo frame_buffer_create_info;
+		frame_buffer_create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		frame_buffer_create_info.pNext = nullptr;
+		frame_buffer_create_info.flags = 0;
+		frame_buffer_create_info.renderPass = *pipeline->getRenderPass();
+		frame_buffer_create_info.attachmentCount = 1;
+		frame_buffer_create_info.pAttachments = &context.image_views[i];
+		frame_buffer_create_info.width = context.surface->getWidth();
+		frame_buffer_create_info.height = context.surface->getHeight();
+		frame_buffer_create_info.layers = 1;
+
+		if (vkCreateFramebuffer(*device->getDevice(), &frame_buffer_create_info, nullptr, &context.frame_buffers[i]) != VK_SUCCESS)
+		{
+			std::cout << "Could not create framebuffer!\n";
+		}
+	}
+
+	//get command buffers for images
 	device->allocateCommandBuffers(commandPool, &context.buffers[0], context.imageCount);
 
 	context.clear_color.float32[0] = 0.2f;
@@ -175,10 +242,11 @@ void RenderEngine::recordBuffers()
 
 		std::vector<VkImage> swapchainImages(image_count);
 
-		if (vkGetSwapchainImagesKHR(*device->getDevice(), *context.swapchain->getSwapchain(), &image_count, &swapchainImages[0]) != VK_SUCCESS)
+		swapchainImages = *context.swapchain->getImages();
+		/*if (vkGetSwapchainImagesKHR(*device->getDevice(), *context.swapchain->getSwapchain(), &image_count, &swapchainImages[0]) != VK_SUCCESS)
 		{
 			std::cout << "Could not get swapchain images!\n";
-		}
+		}*/
 
 		VkCommandBufferBeginInfo cmdBufferBeginInfo;
 		cmdBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;

@@ -19,8 +19,14 @@ public:
 
 	VkSwapchainKHR* getSwapchain();
 	uint32_t getImageCount();
+	VkFormat getFormat();
+	std::vector<VkImage>* getImages();
+
 private:
 	VkSwapchainKHR* swapchain;
 	VkAllocationCallbacks* allocs;
 	VkDevice* device;
+	VkFormat format;
+
+	std::vector<VkImage> images;
 };

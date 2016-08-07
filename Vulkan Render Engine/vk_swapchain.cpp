@@ -53,7 +53,7 @@ VK_Swapchain::VK_Swapchain(VK_SwapchainInfo* swapinfo)
 	//Get the required swapchain image format
 	if ((surface_formats.size() == 1) && (surface_formats[0].format == VK_FORMAT_UNDEFINED))
 	{
-		surface_format = { VK_FORMAT_R8G8B8A8_UNORM,VK_COLORSPACE_SRGB_NONLINEAR_KHR };
+		surface_format = { VK_FORMAT_R8G8B8A8_UNORM,VK_COLORSPACE_SRGB_NONLINEAR_KHR };		
 	}
 	else
 	{
@@ -68,6 +68,8 @@ VK_Swapchain::VK_Swapchain(VK_SwapchainInfo* swapinfo)
 			}
 		}
 	}
+
+	format = surface_format.format;
 
 	//Set the swapchain extent
 	VkExtent2D swap_chain_extent;
@@ -177,8 +179,19 @@ VK_Swapchain::VK_Swapchain(VK_SwapchainInfo* swapinfo)
 		std::cout << "Vulkan Error: Could not create swap chain!\n";
 		return;
 	}
-
+	
 	device = swapinfo->device;
+
+	if ((vkGetSwapchainImagesKHR(*device, *swapchain, &image_count, nullptr) != VK_SUCCESS) || (image_count == 0))
+	{
+		std::cout << "Could not get the number of swap chain images!\n";
+	}
+
+	images.resize(image_count);
+	if ((vkGetSwapchainImagesKHR(*device, *swapchain, &image_count, &images[0]) != VK_SUCCESS) || (image_count == 0))
+	{
+		std::cout << "Could not get swap chain images!\n";
+	}
 }
 
 VkSwapchainKHR* VK_Swapchain::getSwapchain()
@@ -188,12 +201,17 @@ VkSwapchainKHR* VK_Swapchain::getSwapchain()
 
 uint32_t VK_Swapchain::getImageCount()
 {
-	uint32_t image_count = 0;
-	if ((vkGetSwapchainImagesKHR(*device, *swapchain, &image_count, nullptr) != VK_SUCCESS) || (image_count ==0))
-	{
-		std::cout << "Could not get the number of swap chain images!\n";
-	}
-	return image_count;
+	return (uint32_t)images.size();
+}
+
+VkFormat VK_Swapchain::getFormat()
+{
+	return format;
+}
+
+std::vector<VkImage>* VK_Swapchain::getImages()
+{
+	return &images;
 }
 
 VK_Swapchain::~VK_Swapchain()

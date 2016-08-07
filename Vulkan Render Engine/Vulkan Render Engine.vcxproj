@@ -129,9 +129,12 @@
     <ClCompile Include="application.cpp" />
     <ClCompile Include="interpolator.cpp" />
     <ClCompile Include="render_engine.cpp" />
+    <ClCompile Include="tools.cpp" />
     <ClCompile Include="vk_device.cpp" />
+    <ClCompile Include="vk_graphics_pipeline.cpp" />
     <ClCompile Include="vk_instance.cpp" />
     <ClCompile Include="vk_physicaldevice.cpp" />
+    <ClCompile Include="vk_shadermodule.cpp" />
     <ClCompile Include="vk_surface.cpp" />
     <ClCompile Include="vk_swapchain.cpp" />
   </ItemGroup>
@@ -140,13 +143,18 @@
     <ClInclude Include="interpolator.h" />
     <ClInclude Include="render_engine.h" />
     <ClInclude Include="vk_device.h" />
+    <ClInclude Include="vk_graphics_pipeline.h" />
     <ClInclude Include="vk_instance.h" />
     <ClInclude Include="vk_physicaldevice.h" />
+    <ClInclude Include="vk_shadermodule.h" />
     <ClInclude Include="vk_surface.h" />
     <ClInclude Include="vk_swapchain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="shader.frag" />
+    <None Include="shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

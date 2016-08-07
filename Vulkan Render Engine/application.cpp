@@ -37,10 +37,10 @@ glm::vec4 blue = { 0.0f,0.0f,1.0f,1.0f };
 glm::vec4 magenta = { 1.0f,0.0f,1.0f,1.0f };
 
 int a_color = colors::red;
-int b_color = colors::blue;
+//int b_color = colors::blue;
 
 Interpolate_Info a_info;
-Interpolate_Info b_info;
+//Interpolate_Info b_info;
 
 std::vector<glm::vec4> color_table = { red,yellow,green,cyan,blue,magenta };
 std::vector<int> color_transition_table = { colors::yellow,colors::green,colors::cyan,colors::blue,colors::magenta,colors::red };
@@ -61,16 +61,16 @@ int main()
 		return -1;
 	}
 
-	GLFWwindow* windowB = glfwCreateWindow(1024, 768, "Window B", nullptr, nullptr);
+	/*GLFWwindow* windowB = glfwCreateWindow(1024, 768, "Window B", nullptr, nullptr);
 	if (!windowB)
 	{
 		cout << "Failed to create GLFW Window B!\n";
 		glfwTerminate();
 		return -1;
-	}
+	}*/
 	//change focus to window
 	glfwMakeContextCurrent(windowA);
-	glfwMakeContextCurrent(windowB);
+	//glfwMakeContextCurrent(windowB);
 
 	RenderEngineInfo re_info;
 	re_info.applicationName = "Vulkan Render Engine Test App!\n";
@@ -84,14 +84,14 @@ int main()
 	r_engine->attachWindow(windowA);
 	r_engine->setWindowClearColor(windowA,color_table[a_color]);
 
-	r_engine->attachWindow(windowB);
-	r_engine->setWindowClearColor(windowB,color_table[b_color]);	
+	//r_engine->attachWindow(windowB);
+	//r_engine->setWindowClearColor(windowB,color_table[b_color]);	
 
 	//main loop.  while the window isn't closing, keep running.
 	//  poll inputs to make sure events are handled.
 	bool running = true;
 	bool runningA = true;
-	bool runningB = true;
+	//bool runningB = true;
 
 	//prepare interpolation stuff
 	Interpolator interp;
@@ -100,9 +100,9 @@ int main()
 	a_info.desired_state.push_back(color_table[color_transition_table[colors::red]]);
 	a_info.duration = 1000.0f;
 
-	b_info.current_state.push_back(color_table[b_color]);
-	b_info.desired_state.push_back(color_table[color_transition_table[colors::blue]]);
-	b_info.duration = 1000.0f;
+	//b_info.current_state.push_back(color_table[b_color]);
+	//b_info.desired_state.push_back(color_table[color_transition_table[colors::blue]]);
+	//b_info.duration = 1000.0f;
 
 	while (running)
 	{
@@ -117,7 +117,7 @@ int main()
 			}
 		}
 
-		if (runningB)
+		/*if (runningB)
 		{
 			if (glfwWindowShouldClose(windowB))
 			{
@@ -125,9 +125,9 @@ int main()
 				glfwDestroyWindow(windowB);
 				runningB = false;
 			}
-		}
+		}*/
 
-		running = runningA || runningB;
+		running = runningA;// || runningB;
 
 		r_engine->pollWindowResize();
 
@@ -144,7 +144,7 @@ int main()
 		}
 		r_engine->setWindowClearColor(windowA, a_info.current_state[0]);
 
-		if (interp.interpolate_linear(&b_info, 0.1f))
+		/*if (interp.interpolate_linear(&b_info, 0.1f))
 		{
 			//the desired color has been reached
 			b_color = color_transition_table[b_color];
@@ -154,7 +154,7 @@ int main()
 			b_info.desired_state[0] = color_table[color_transition_table[b_color]];
 			b_info.duration = 1000.0f;
 		}
-		r_engine->setWindowClearColor(windowB, b_info.current_state[0]);
+		r_engine->setWindowClearColor(windowB, b_info.current_state[0]);*/
 		//end update commands
 
 		//draw commands

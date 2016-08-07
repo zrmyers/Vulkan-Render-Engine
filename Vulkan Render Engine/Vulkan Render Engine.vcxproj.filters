@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{db221531-ecb3-4189-bcde-c46474fe081f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp">
@@ -37,6 +40,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="interpolator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vk_graphics_pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vk_shadermodule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,8 +77,21 @@
     <ClInclude Include="interpolator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="vk_graphics_pipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vk_shadermodule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

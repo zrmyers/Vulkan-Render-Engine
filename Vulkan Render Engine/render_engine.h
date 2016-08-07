@@ -6,6 +6,7 @@ class VK_Instance;
 class VK_Surface;
 class VK_Swapchain;
 class VK_Device;
+class VK_GraphicsPipeline;
 
 typedef struct RenderEngineInfo
 {
@@ -26,8 +27,10 @@ private:
 		VK_Surface* surface;
 		VK_Swapchain* swapchain;
 		uint32_t imageCount;
+		std::vector<VkImageView> image_views;
+		std::vector<VkFramebuffer> frame_buffers;
 		std::vector<VkCommandBuffer> buffers; //when multithreading, this will need to be local for each thread
-		VkClearColorValue clear_color;
+		VkClearColorValue clear_color;		
 	}RenderContext;
 //public methods
 public:
@@ -48,6 +51,7 @@ public:
 private:
 	VK_Instance* instance;
 	VK_Device* device;
+	VK_GraphicsPipeline* pipeline;
 
 	std::vector<RenderContext> contexts;
 
